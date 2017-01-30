@@ -1,0 +1,1 @@
+php $HOME/migrations/migrate.php $1 $2
