@@ -1,0 +1,9 @@
+{
+	"autoload" : {
+		"psr-4" : {
+			"Database\\" : "database",
+			"Migration\\" : "migrations",
+			"Provider\\" : "providers"
+		}
+	}
+}
