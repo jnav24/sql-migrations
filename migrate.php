@@ -2,7 +2,7 @@
 
 require 'bootstrap.php';
 
-$path = '/home/vagrant/vhost/my/migrations';
+$path = env()->getEnv('MIGRATION_PATH');
 
 if (isset($argv[1])) {
 	if ($argv[1] == 'init') {
