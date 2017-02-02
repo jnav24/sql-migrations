@@ -1,10 +1,22 @@
 Simple migration for sql files
 
-Move the bin/migrate file to the bin, change permissions, and change the path in the migrate file.
+This takes MySQL (.sql) files and run them for you so don't have to run each one manually.
 
-Copy .env_sample and put in your db credentials in
+Setup
+* Open .env_sample, save as .env
+* Change the values in the .env to match your project
+* Done.
 
-run
+Optional setup
+* Move the bin/migrate file to your bin folder
+* edit the path in the migrate file to point to migrate.php
+* change permissions
+
+```
+chmod +x ~/bin/migrate
+```
+
+To run your migrations
 
 ```
 migrate
