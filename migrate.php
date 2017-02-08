@@ -21,6 +21,11 @@ if (isset($argv[1])) {
 
 		exit;
 	}
+	else if ($argv[1] == '-e') {
+		$export = new Migration\ExportMigrations($path, $db);
+		$export->up();
+		die();
+	}
 	else {
 		endMigration($argv[1]);
 	}
