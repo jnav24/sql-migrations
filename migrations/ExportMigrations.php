@@ -12,20 +12,22 @@ class ExportMigrations
 	{
 		$this->db = $db;
 		$this->export_dir = env()->getEnv('EXPORT_DIR_NAME');
-		$this->path = $path;
+		$this->path = rtrim($path, '/') . '/';
 		$this->table_name = $table_name;
 	}
 
 	public function up()
 	{
-		// $this->setUp();
+		$this->setUp();
 		// $this->exportTablesNoData();
-		$this->exportTableContents();
+		// $this->exportTableContents();
 	}
 
 	private function setUp()
 	{
-		exec('cd ' . $this->path . ' && mkdir ' . $this->export_dir);
+		if (!file_exists($this->path . $this->export_dir)) {
+			exec('cd ' . $this->path . ' && mkdir ' . $this->export_dir);
+		}
 	}
 
 	private function exportTablesNoData()
@@ -33,38 +35,51 @@ class ExportMigrations
 		$user = env()->getEnv('DB_USER');
 		$pass = env()->getEnv('DB_PASS');
 		$db_name = env()->getEnv('DB_NAME');
-
 		$file_name = (!empty($this->table_name) ? $this->table_name : 'all_table_structure');
 
 
 		$exec = "mysqldump -u{$user} -p{$pass} --no-data --routines {$db_name} {$this->table_name} > ";
-		$exec .= rtrim($this->path,'/') . "/{$export_dir}/{$file_name}.sql"
+		$exec .= $this->path . "{$export_dir}/{$file_name}_" . strtotime('now') . ".sql";
 		$exec .= " 2>&1";
-		exec($exec);
+
+		$this->runShellCommand($exec);
 	}
 
-	private function exportTableContents($table_name = '')
+	private function exportTableContents()
 	{
-		$tables = $this->getTables($table_name);
+		$tables = $this->getTables();
 		$user = env()->getEnv('DB_USER');
 		$pass = env()->getEnv('DB_PASS');
 		$db_name = env()->getEnv('DB_NAME');
 
 		foreach ($tables as $table) {
-			exec("mysqldump -u{$user} -p{$pass} {$db_name} {$table} > ". rtrim($this->path,'/') . "/{$export_dir}/{$table}.sql";
+			$exec = "mysqldump -u{$user} -p{$pass} {$db_name} {$table} > ". $this->path . "{$export_dir}/{$table}_" . strtotime('now') . ".sql";
+			$this->runShellCommand($exec);
 		}
 	}
 
-	private function getTables($table_name)
+	private function getTables()
 	{
 		$sql = "show tables";
 
-		if (!empty($table_name)) {
-			$sql .= " like '". $table_name ."'";
+		if (!empty($this->table_name)) {
+			$sql .= " like '". $this->table_name ."'";
 		}
 
 		$this->db->query($sql);
 		$results = $this->db->getColumn();
 		return (!$results ? [] : $results);
+	}
+
+	private function runShellCommand($command)
+	{
+		$exitCode = 0;
+		$output = '';
+		exec($command, $output, $exitCode);
+
+		if ($exitCode) {
+			echo "There was an error: \n";
+			echo $output;
+		}
 	}
 }
