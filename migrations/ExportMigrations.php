@@ -20,7 +20,7 @@ class ExportMigrations
 	{
 		$this->setUp();
 		$this->exportTablesNoData();
-		// $this->exportTableContents();
+		$this->exportTableContents();
 	}
 
 	private function setUp()
@@ -44,7 +44,7 @@ class ExportMigrations
 		}
 
 		$exec = "mysqldump -u{$user} -p{$pass} --no-data {$routines} {$db_name} {$this->table_name} > ";
-		$exec .= $this->path . "{$this->export_dir}/{$file_name}_" . strtotime('now') . ".sql";
+		$exec .= $this->path . "{$this->export_dir}/{$file_name}_migration_" . strtotime('now') . ".sql";
 		$exec .= " 2>&1";
 
 		$this->runShellCommand($exec);
@@ -58,7 +58,9 @@ class ExportMigrations
 		$db_name = env()->getEnv('DB_NAME');
 
 		foreach ($tables as $table) {
-			$exec = "mysqldump -u{$user} -p{$pass} {$db_name} {$table} > ". $this->path . "{$this->export_dir}/{$table}_" . strtotime('now') . ".sql";
+			$exec = "mysqldump -u{$user} -p{$pass} --no-create-info {$db_name} {$table} > ";
+			$exec .= $this->path . "{$this->export_dir}/{$table}_seed_" . strtotime('now') . ".sql";
+			$exec .= " 2>&1";
 			$this->runShellCommand($exec);
 		}
 	}
