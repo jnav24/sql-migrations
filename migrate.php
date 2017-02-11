@@ -10,7 +10,7 @@ if (isset($argv[1])) {
 		$migrate->up();
 
 		if (isset($argv[2])) {
-			if ($argv[2] == '') {
+			if ($argv[2] == 'm') {
 				runSqlMigrations($path, $db, $m_db);
 			}
 			else {

@@ -3,6 +3,7 @@ Simple migration for sql files
 This takes MySQL (.sql) files and run them for you so don't have to run each one manually.
 
 Setup
+* composer dumpautoload -o
 * Open .env_sample, save as .env
 * Change the values in the .env to match your project
 * Move the bin/migrate file to your bin folder
