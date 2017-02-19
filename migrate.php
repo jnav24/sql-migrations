@@ -3,39 +3,20 @@
 require 'bootstrap.php';
 
 $path = env()->getEnv('MIGRATION_PATH');
+$command = new Migration\CommandMigrations();
 
 if (isset($argv[1])) {
-	if ($argv[1] == 'init') {
-		$migrate = new Migration\InitMigrations($path, $db, $m_db);
-		$migrate->up();
+	$args = $command->buildMigrateArray($argv);
 
-		if (isset($argv[2])) {
-			if ($argv[2] == 'm') {
-				runSqlMigrations($path, $db, $m_db);
-			}
-			else {
-				endMigration($argv[2]);
-			}
-		}
-		
-
-		exit;
+	if (array_key_exists('-h', $args)) {
+		$command->listAllCommands();
 	}
-	else {
-		endMigration($argv[1]);
+	else if (array_key_exists('-i', $args)) {
+		$migrate = new Migration\InitMigrations($path, $db, $m_db, array_key_exists('-m', $args));
+		$migrate->up();
 	}
 }
-
-function runSqlMigrations($path, $db, $m_db) 
-{
+else {
 	$migrate = new Migration\SqlMigrations($path, $db, $m_db);
 	$migrate->up();
 }
-
-function endMigration($arg)
-{
-	echo "What do you mean? {$arg}?\n";
-	die();
-} 
-
-runSqlMigrations($path, $db, $m_db);
