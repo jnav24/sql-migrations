@@ -6,17 +6,21 @@ class InitMigrations extends SqlMigrations
 {
 	private $filepath;
 	private $m_db;
+	private $run_migration_files = false;
 
-	public function __construct($filepath, \Database\DB $db, \Database\DB $m_db)
+	public function __construct($filepath, \Database\DB $db, \Database\DB $m_db, $run_migration_files)
 	{
 		$this->filepath = $filepath;
 		$this->m_db = $m_db;
+		$this->run_migration_files = $run_migration_files;
 		parent::__construct($filepath, $db, $m_db);
 	}
 
 	public function up()
 	{
-		if ($this->createMigrationTable()) {
+		$table_created = $this->createMigrationTable();
+
+		if ($table_created && $this->run_migration_files) {
 			$migrations = $this->getMigrationFiles();
 
 			foreach ($migrations as $migration) {
@@ -35,11 +39,5 @@ class InitMigrations extends SqlMigrations
   		$sql .= ")";
   		$this->m_db->query($sql);
   		return $this->m_db->execute();
-	}
-
-	public function executeBaseMigration()
-	{
-		die('executing...');
-		$this->runMigrations($this->getMigrationFiles());
 	}
 }
