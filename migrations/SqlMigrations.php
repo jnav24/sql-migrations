@@ -32,7 +32,7 @@ class SqlMigrations
 
 	private function getMigrationData()
 	{
-		$sql = "SELECT filename FROM " . env()->getEnv('M_TABLE');
+		$sql = "SELECT filename FROM " . env()->getEnv('MY_DB_TABLE');
 		$this->m_db->query($sql);
 		return $this->m_db->getAll();
 	}
@@ -53,7 +53,7 @@ class SqlMigrations
 
 	protected function insertMigration($migration)
 	{
-		$sql = "INSERT INTO " . env()->getEnv('M_TABLE') . " ";
+		$sql = "INSERT INTO " . env()->getEnv('MY_DB_TABLE') . " ";
 		$sql .= "(filename, migrated_at) VALUES ";
 		$sql .= "(:filename, :timestamp)";
 		$this->m_db->query($sql);
