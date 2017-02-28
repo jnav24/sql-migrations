@@ -4,18 +4,49 @@ namespace Migration;
 
 class CommandMigrations
 {
+	private $commands;
+	private $db;
+	private $m_db;
+	private $path;
+
 	public function __construct()
 	{
 		$this->commands = $this->options();
+		$args = func_get_args();
+
+		if (!empty($args)) {
+			$args = $args[0];
+			$this->path = $args[0]; 
+			$this->db = $args[1]; 
+			$this->m_db = $args[2];
+		}
 	}
 
 	public function options()
 	{
 		return [
-			'-h' => 'display help commands',
-			'-i' => 'creates database and tables but does not import data',
-			'-e' => 'idk what this does',
-			'-m' => 'insert seeds in with the init migration'
+			'-h' => [
+				'description' => 'display help commands',
+				'exec' => [
+					'obj' => 'CommandMigrations',
+					'method' => 'listAllCommands',
+				]
+			],
+			'-i' => [
+				'description' => 'Creates migration table. By default, this command does not import all migration files into the migration table. To import the migration files, use the `-i seed`.',
+				'exec' => [
+					'obj' => 'InitMigrations',
+					'method' => 'up',
+					'params' => [$this->path, $this->db, $this->m_db]
+				]
+			],
+			'-e' => [
+				'description' => 'Export/Import all your table structures from the database specified in the env file. By default, this command only exports all your tables but not the data. To export with data, use `-e seed`. To import, use `-e import`.',
+				'exec' => [
+					'obj' => '',
+					'method' => ''
+				]
+			]
 		];
 	}
 
@@ -28,7 +59,7 @@ class CommandMigrations
 		echo "Options:\n";
 
 		foreach ($this->commands as $option => $description) {
-			echo "\t{$option}\t{$description}\n";
+			echo "\t{$option}\t{$description['description']}\n";
 		}
 
 		echo "\nDocumentation can be found at http://github.com/jnav24\n";

@@ -3,17 +3,28 @@
 require 'bootstrap.php';
 
 $path = env()->getEnv('MIGRATION_PATH');
-$command = new Migration\CommandMigrations();
+$params = [$path, $db, $m_db];
+$command = new Migration\CommandMigrations($params);
+
+
 
 if (isset($argv[1])) {
 	$args = $command->buildMigrateArray($argv);
+	$options = $command->options();
 
-	if (array_key_exists('-h', $args)) {
-		$command->listAllCommands();
-	}
-	else if (array_key_exists('-i', $args)) {
-		$migrate = new Migration\InitMigrations($path, $db, $m_db, array_key_exists('-m', $args));
-		$migrate->up();
+	foreach ($args as $arg => $value) {
+		if (!empty($options[$arg]) && !empty($options[$arg]['exec']['obj'])) {
+			$class = "Migration\\".$options[$arg]['exec']['obj'];
+
+			if (!empty($options[$arg]['exec']['params'])) {
+				$obj = new $class($options[$arg]['exec']['params']);
+			}
+			else {
+				$obj = new $class();
+			}
+
+			$obj->$options[$arg]['exec']['method']($value);
+		}
 	}
 }
 else {
