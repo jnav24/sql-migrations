@@ -7,21 +7,18 @@ class InitMigrations extends SqlMigrations
 	private $filepath;
 	private $m_db;
 
-	public function __construct()
+	public function __construct($params)
 	{
-		$args = func_get_args();
-		$args = $args[0];
-
-		$this->filepath = $args[0]; 
-		$this->m_db = $args[2];
-		parent::__construct($this->filepath, $args[1], $this->m_db);
+		$this->filepath = $params[0]; 
+		$this->m_db = $params[2];
+		parent::__construct($params);
 	}
 
-	public function up($seed = '')
+	public function up($option = '')
 	{
 		$table_created = $this->createMigrationTable();
 
-		if ($table_created && $seed === 'seed') {
+		if ($table_created && $option === 'seed') {
 			$migrations = $this->getMigrationFiles();
 
 			foreach ($migrations as $migration) {

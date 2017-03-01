@@ -25,15 +25,23 @@ class CommandMigrations
 	public function options()
 	{
 		return [
+			'-c' => [
+				'description' => 'Runs a check for new migrations.',
+				'exec' => [
+					'obj' => 'SqlMigrations',
+					'method' => 'checkForNewMigration',
+					'params' => [$this->path, $this->db, $this->m_db]
+				]
+			],
 			'-h' => [
-				'description' => 'display help commands',
+				'description' => 'Display help commands',
 				'exec' => [
 					'obj' => 'CommandMigrations',
 					'method' => 'listAllCommands',
 				]
 			],
 			'-i' => [
-				'description' => 'Creates migration table. By default, this command does not import all migration files into the migration table. To import the migration files, use the `-i seed`.',
+				'description' => 'Creates migration table. By default, this command does not import all migration files into the migration table.' . "\n\n\t\t" . '`-i seed`' . "\n\t\t" . 'Import the migration files to migration table.' . "\n",
 				'exec' => [
 					'obj' => 'InitMigrations',
 					'method' => 'up',
@@ -41,10 +49,11 @@ class CommandMigrations
 				]
 			],
 			'-e' => [
-				'description' => 'Export/Import all your table structures from the database specified in the env file. By default, this command only exports all your tables but not the data. To export with data, use `-e seed`. To import, use `-e import`.',
+				'description' => 'Export/Import all your table structures from the database specified in the env file. By default, this command only exports all your tables but not the data.' . "\n\n\t\t" . '`-e <table_name>`' . "\n\t\t" . 'Export specific table.' . "\n\n\t\t" . '`-e seed`' . "\n\t\t" .'Export all tables with data.'  . "\n\n\t\t" . '`-e seed--<table_name>`' . "\n\t\t" .'Export specific table with data.' . "\n\n\t\t" .'`-e import`' . "\n\t\t" .'Import all exported data.' . "\n",
 				'exec' => [
 					'obj' => '',
-					'method' => ''
+					'method' => '',
+					'params' => [$this->path, $this->db]
 				]
 			]
 		];

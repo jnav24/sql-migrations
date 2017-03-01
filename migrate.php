@@ -6,8 +6,6 @@ $path = env()->getEnv('MIGRATION_PATH');
 $params = [$path, $db, $m_db];
 $command = new Migration\CommandMigrations($params);
 
-
-
 if (isset($argv[1])) {
 	$args = $command->buildMigrateArray($argv);
 	$options = $command->options();
@@ -28,6 +26,6 @@ if (isset($argv[1])) {
 	}
 }
 else {
-	$migrate = new Migration\SqlMigrations($path, $db, $m_db);
+	$migrate = new Migration\SqlMigrations($params);
 	$migrate->up();
 }
