@@ -8,19 +8,42 @@ class ExportMigrations
 	private $export_dir;
 	private $path;
 
-	public function __construct($path, $db, $table_name = '')
+	public function __construct($params)
 	{
-		$this->db = $db;
 		$this->export_dir = env()->getEnv('EXPORT_DIR_NAME');
-		$this->path = rtrim($path, '/') . '/';
-		$this->table_name = $table_name;
+		$this->path = rtrim($params[0], '/') . '/'; 
+		$this->db = $params[1];
 	}
 
-	public function up()
+	public function up($option = '')
 	{
-		$this->setUp();
-		$this->exportTablesNoData();
-		$this->exportTableContents();
+		if ($this->validateParams($option)) {
+			$this->setUp();
+			$this->exportTablesNoData();
+			$this->exportTableContents();
+		}
+	}
+
+	private function validateParams($option)
+	{
+		if (empty($option)) {
+			return true;
+		} 
+
+		$options = ['import', 'seed'];
+		$user_options = explode('--', $option);
+		
+		/*
+		* @TODO:
+		* between this condition below and the up()
+		* figure out a way to call a method based on the user input
+		* or pass it to a property
+		*/
+		if (in_array($user_options[0], $options)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private function setUp()

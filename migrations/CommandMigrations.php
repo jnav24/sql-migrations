@@ -51,8 +51,8 @@ class CommandMigrations
 			'-e' => [
 				'description' => 'Export/Import all your table structures from the database specified in the env file. By default, this command only exports all your tables but not the data.' . "\n\n\t\t" . '`-e <table_name>`' . "\n\t\t" . 'Export specific table.' . "\n\n\t\t" . '`-e seed`' . "\n\t\t" .'Export all tables with data.'  . "\n\n\t\t" . '`-e seed--<table_name>`' . "\n\t\t" .'Export specific table with data.' . "\n\n\t\t" .'`-e import`' . "\n\t\t" .'Import all exported data.' . "\n",
 				'exec' => [
-					'obj' => '',
-					'method' => '',
+					'obj' => 'ExportMigrations',
+					'method' => 'up',
 					'params' => [$this->path, $this->db]
 				]
 			]
