@@ -3,50 +3,29 @@
 require 'bootstrap.php';
 
 $path = env()->getEnv('MIGRATION_PATH');
+$params = [$path, $db, $m_db];
+$command = new Migration\CommandMigrations($params);
 
 if (isset($argv[1])) {
-	if ($argv[1] == 'init') {
-		$migrate = new Migration\InitMigrations($path, $db, $m_db);
-		$migrate->up();
+	$args = $command->buildMigrateArray($argv);
+	$options = $command->options();
 
-		if (isset($argv[2])) {
-			if ($argv[2] == '') {
-				runSqlMigrations($path, $db, $m_db);
+	foreach ($args as $arg => $value) {
+		if (!empty($options[$arg]) && !empty($options[$arg]['exec']['obj'])) {
+			$class = "Migration\\".$options[$arg]['exec']['obj'];
+
+			if (!empty($options[$arg]['exec']['params'])) {
+				$obj = new $class($options[$arg]['exec']['params']);
 			}
 			else {
-				endMigration($argv[2]);
+				$obj = new $class();
 			}
+
+			$obj->$options[$arg]['exec']['method']($value);
 		}
-		
-
-		exit;
-	}
-	else if ($argv[1] == '-e') {
-		$table_name = '';
-
-		if (isset($argv[2])) {
-			$table_name = $argv[2];
-		}
-
-		$export = new Migration\ExportMigrations($path, $db, $table_name);
-		$export->up();
-		die();
-	}
-	else {
-		endMigration($argv[1]);
 	}
 }
-
-function runSqlMigrations($path, $db, $m_db) 
-{
-	$migrate = new Migration\SqlMigrations($path, $db, $m_db);
+else {
+	$migrate = new Migration\SqlMigrations($params);
 	$migrate->up();
 }
-
-function endMigration($arg)
-{
-	echo "What do you mean? {$arg}?\n";
-	die();
-} 
-
-runSqlMigrations($path, $db, $m_db);
