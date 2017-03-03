@@ -27,7 +27,7 @@ class InitMigrations extends SqlMigrations
 
 	private function createMigrationTable()
 	{
-		$sql = "CREATE TABLE IF NOT EXISTS " . env()->getEnv('M_TABLE') . " (";
+		$sql = "CREATE TABLE IF NOT EXISTS " . env()->getEnv('MY_DB_TABLE') . " (";
 		$sql .= "`id` int(11) NOT NULL AUTO_INCREMENT,";
   		$sql .= "`filename` varchar(255) NOT NULL,";
   		$sql .= "`migrated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,";

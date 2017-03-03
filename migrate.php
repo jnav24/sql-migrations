@@ -21,6 +21,17 @@ if (isset($argv[1])) {
 
 		exit;
 	}
+	else if ($argv[1] == '-e') {
+		$table_name = '';
+
+		if (isset($argv[2])) {
+			$table_name = $argv[2];
+		}
+
+		$export = new Migration\ExportMigrations($path, $db, $table_name);
+		$export->up();
+		die();
+	}
 	else {
 		endMigration($argv[1]);
 	}

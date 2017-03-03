@@ -49,7 +49,7 @@ $db = new Database\DB(
 	env()->getEnv('DB_USER'), 
 	env()->getEnv('DB_PASS'));
 $m_db = new Database\DB(
-	env()->getEnv('M_HOST', env()->getEnv('DB_HOST')), 
-	env()->getEnv('M_NAME', env()->getEnv('DB_NAME')), 
-	env()->getEnv('M_USER', env()->getEnv('DB_USER')), 
-	env()->getEnv('M_PASS', env()->getEnv('DB_PASS')));
+	env()->getEnv('MY_DB_HOST', env()->getEnv('DB_HOST')), 
+	env()->getEnv('MY_DB_NAME', env()->getEnv('DB_NAME')), 
+	env()->getEnv('MY_DB_USER', env()->getEnv('DB_USER')), 
+	env()->getEnv('MY_DB_PASS', env()->getEnv('DB_PASS')));
