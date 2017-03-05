@@ -20,16 +20,27 @@ class ExportMigrations
 	public function up($option = '')
 	{
 		if ($this->validateParams($option)) {
-//			$this->setUp();
-			var_dump($this->table_name);
-			var_dump($this->method_name);
-            die();
-
-
-//			$this->exportTablesNoData();
-//			$this->exportTableContents();
+		    $method = "run" . ucfirst($this->method_name);
+		    $this->{$method}();
 		}
 	}
+
+    private function runExport()
+    {
+        $this->setUp();
+        $this->exportTablesNoData();
+    }
+
+    private function runImport()
+    {
+        die('import');
+    }
+
+    private function runSeed()
+    {
+        $this->setUp();
+        $this->exportTableContents();
+    }
 
 	private function validateParams($option)
 	{
@@ -98,7 +109,13 @@ class ExportMigrations
 
 	private function exportTableContents()
 	{
-		$tables = $this->getTables();
+	    $tables = array();
+	    $tables[] = $this->table_name;
+
+	    if (empty($this->table_name)) {
+            $tables = $this->getTables();
+        }
+
 		$user = env()->getEnv('DB_USER');
 		$pass = env()->getEnv('DB_PASS');
 		$db_name = env()->getEnv('DB_NAME');
