@@ -7,6 +7,8 @@ class ExportMigrations
 	private $db;
 	private $export_dir;
 	private $path;
+	private $table_name = '';
+	private $method_name;
 
 	public function __construct($params)
 	{
@@ -18,30 +20,42 @@ class ExportMigrations
 	public function up($option = '')
 	{
 		if ($this->validateParams($option)) {
-			$this->setUp();
-			$this->exportTablesNoData();
-			$this->exportTableContents();
+//			$this->setUp();
+			var_dump($this->table_name);
+			var_dump($this->method_name);
+            die();
+
+
+//			$this->exportTablesNoData();
+//			$this->exportTableContents();
 		}
 	}
 
 	private function validateParams($option)
 	{
 		if (empty($option)) {
+		    $this->method_name = 'export';
 			return true;
 		} 
 
 		$options = ['import', 'seed'];
-		$user_options = explode('--', $option);
-		
-		/*
-		* @TODO:
-		* between this condition below and the up()
-		* figure out a way to call a method based on the user input
-		* or pass it to a property
-		*/
+		$user_options = explode('_', $option);
+
 		if (in_array($user_options[0], $options)) {
+		    $this->method_name = $user_options[0];
+
+		    if (!empty($user_options[1])) {
+		        $this->table_name = $user_options[1];
+            }
+
 			return true;
 		}
+
+		if ($this->tableExists($option)) {
+            $this->method_name = 'export';
+            $this->table_name = $option;
+            return true;
+        }
 
 		return false;
 	}
@@ -72,6 +86,15 @@ class ExportMigrations
 
 		$this->runShellCommand($exec);
 	}
+
+	private function tableExists($table)
+    {
+        $sql = "SHOW TABLES LIKE :table";
+        $this->db->query($sql);
+        $this->db->bind(':table', $table);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 
 	private function exportTableContents()
 	{
