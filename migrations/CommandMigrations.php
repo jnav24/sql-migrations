@@ -53,7 +53,7 @@ class CommandMigrations
 				'exec' => [
 					'obj' => 'ExportMigrations',
 					'method' => 'up',
-					'params' => [$this->path, $this->db]
+					'params' => [$this->path, $this->db, $this->m_db]
 				]
 			]
 		];

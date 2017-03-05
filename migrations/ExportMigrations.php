@@ -2,7 +2,7 @@
 
 namespace Migration;
 
-class ExportMigrations
+class ExportMigrations extends SqlMigrations
 {
 	private $db;
 	private $export_dir;
@@ -12,9 +12,10 @@ class ExportMigrations
 
 	public function __construct($params)
 	{
-		$this->export_dir = env()->getEnv('EXPORT_DIR_NAME');
+		$this->export_dir = rtrim(env()->getEnv('EXPORT_DIR_NAME'), '/') . '/';
 		$this->path = rtrim($params[0], '/') . '/'; 
 		$this->db = $params[1];
+        parent::__construct($params);
 	}
 
 	public function up($option = '')
@@ -33,13 +34,41 @@ class ExportMigrations
 
     private function runImport()
     {
-        die('import');
+        $this->filepath = $this->path . $this->export_dir;
+        $export_files = $this->getMigrationFiles();
+
+        $migrations = $this->getExportedFiles($export_files, '_migration_');
+        $seeds = $this->getExportedFiles($export_files, '_seed_');
+
+        $this->importFiles($migrations);
+        $this->importFiles($seeds);
+
+        $exec = "rm -rf " . $this->path . $this->export_dir;
+        $this->runShellCommand($exec);
     }
 
     private function runSeed()
     {
         $this->setUp();
         $this->exportTableContents();
+    }
+
+    private function getExportedFiles($export_files, $needle)
+    {
+        return array_filter($export_files, function($file) use ($needle) {
+            return strpos($file, $needle);
+        });
+    }
+
+    private function importFiles(array $files)
+    {
+        array_map(function($file) {
+            $exec = "mysql -u" . env()->getEnv('DB_USER');
+            $exec .= " -p" . env()->getEnv('DB_PASS');
+            $exec .= " " . env()->getEnv('DB_NAME') . " < ";
+            $exec .= $this->path . $this->export_dir . $file;
+            $this->runShellCommand($exec);
+        }, $files);
     }
 
 	private function validateParams($option)

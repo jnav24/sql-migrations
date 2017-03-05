@@ -5,7 +5,7 @@ namespace Migration;
 class SqlMigrations
 {
 	private $db;
-	private $filepath;
+	protected $filepath;
 	private $m_db;
 	private $ignore_errors = false;
 
