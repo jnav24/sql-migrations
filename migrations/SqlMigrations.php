@@ -9,18 +9,20 @@ class SqlMigrations
 	private $m_db;
 	private $ignore_errors = false;
 
-	public function __construct($filepath, \Database\DB $db, \Database\DB $m_db)
+	public function __construct($params)
 	{
-		$this->db = $db;
-		$this->filepath = $filepath;
-		$this->m_db = $m_db;
+		if (!$params[1] instanceof \Database\DB || !$params[2] instanceof \Database\DB) {
+			throw new \Exception('Must be from Database DB instance.');
+		}
+
+		$this->db = $params[1];
+		$this->filepath = $params[0];
+		$this->m_db = $params[2];
 	}
 
 	public function up()
 	{
-		$migrationData = $this->getMigrationData();
-		$migrationFiles = $this->getMigrationFiles();
-		$new_migrations = $this->getNewMigrationsInFiles($migrationData, $migrationFiles);
+		$new_migrations = $this->getMigrations();
 
 		if (count($new_migrations)) {
 			$this->runMigrations($new_migrations);
@@ -28,6 +30,30 @@ class SqlMigrations
 		}
 
 		echo "There are no new migrations.\n";
+	}
+
+	public function checkForNewMigration()
+	{
+		$new_migrations = $this->getMigrations();
+
+		if (count($new_migrations)) {
+			$plural = (count($new_migrations) > 1 ? 's' : '');
+			$grammar = (count($new_migrations) > 1 ? 'are' : 'is');
+			echo "There {$grammar} " . count($new_migrations) ." new migration{$plural}:\n";
+			foreach ($new_migrations as $migration) {
+				echo "\t{$migration}\n";
+			}
+			return;
+		}
+
+		echo "There are no new migrations.\n";
+	}
+
+	private function getMigrations()
+	{
+		$migrationData = $this->getMigrationData();
+		$migrationFiles = $this->getMigrationFiles();
+		return $this->getNewMigrationsInFiles($migrationData, $migrationFiles);
 	}
 
 	private function getMigrationData()

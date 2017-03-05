@@ -7,16 +7,18 @@ class InitMigrations extends SqlMigrations
 	private $filepath;
 	private $m_db;
 
-	public function __construct($filepath, \Database\DB $db, \Database\DB $m_db)
+	public function __construct($params)
 	{
-		$this->filepath = $filepath;
-		$this->m_db = $m_db;
-		parent::__construct($filepath, $db, $m_db);
+		$this->filepath = $params[0]; 
+		$this->m_db = $params[2];
+		parent::__construct($params);
 	}
 
-	public function up()
+	public function up($option = '')
 	{
-		if ($this->createMigrationTable()) {
+		$table_created = $this->createMigrationTable();
+
+		if ($table_created && $option === 'seed') {
 			$migrations = $this->getMigrationFiles();
 
 			foreach ($migrations as $migration) {
@@ -35,11 +37,5 @@ class InitMigrations extends SqlMigrations
   		$sql .= ")";
   		$this->m_db->query($sql);
   		return $this->m_db->execute();
-	}
-
-	public function executeBaseMigration()
-	{
-		die('executing...');
-		$this->runMigrations($this->getMigrationFiles());
 	}
 }
