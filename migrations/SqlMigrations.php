@@ -32,7 +32,7 @@ class SqlMigrations
 		echo "There are no new migrations.\n";
 	}
 
-	public function checkForNewMigration()
+	public function checkForNewMigration($option = '')
 	{
 		$new_migrations = $this->getMigrations();
 
@@ -43,10 +43,24 @@ class SqlMigrations
 			foreach ($new_migrations as $migration) {
 				echo "\t{$migration}\n";
 			}
+
+			if (!empty($option)) {
+				$method = 'run' . ucfirst($option);
+				if (method_exists($this, $method)) {
+					$this->{$method}($new_migrations);
+				}
+			}
+
 			return;
 		}
 
 		echo "There are no new migrations.\n";
+	}
+
+	private function runIgnore($migrations)
+	{
+		$this->ignore_errors = true;
+		$this->runMigrations($migrations);
 	}
 
 	private function getMigrations()

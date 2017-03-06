@@ -26,7 +26,7 @@ class CommandMigrations
 	{
 		return [
 			'-c' => [
-				'description' => 'Runs a check for new migrations.',
+				'description' => 'Runs a check for new migrations.' . "\n\n\t\t" . '`-c ignore`' . "\n\t\t" . 'If there are errors in the sql files and wish to ignore them, this will your new migrations files into your migration table without executing the SQL in your new migration files.' . "\n",
 				'exec' => [
 					'obj' => 'SqlMigrations',
 					'method' => 'checkForNewMigration',
