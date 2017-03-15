@@ -21,7 +21,8 @@ if (isset($argv[1])) {
 				$obj = new $class();
 			}
 
-			$obj->$options[$arg]['exec']['method']($value);
+			$methodName = $options[$arg]['exec']['method'];
+			$obj->$methodName($value);
 		}
 	}
 }

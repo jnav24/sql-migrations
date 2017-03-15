@@ -59,7 +59,7 @@ class CommandMigrations
 		];
 	}
 
-	public function listAllCommands()
+	public function listAllCommands($value = '')
 	{
 		echo "SQL Migrations\n";
 		echo "Author: Justin Navarro\n\n";
