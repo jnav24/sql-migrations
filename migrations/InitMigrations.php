@@ -4,9 +4,6 @@ namespace Migration;
 
 class InitMigrations extends SqlMigrations
 {
-	private $filepath;
-	private $m_db;
-
 	public function __construct($params)
 	{
 		$this->filepath = $params[0]; 
